@@ -144,7 +144,7 @@ git pull
 git checkout -b break/padding
 ```
 
-In `lablib/preprocess.py`, change the padding value `114` to `0`. Commit, push and open a pull request. The **test** job turns red, `test_letterbox_keeps_aspect_and_pads_grey` fails, and the **Merge** button is blocked. Read the error in the job log. Then close the pull request without merging.
+In `lablib/preprocess.py`, change the padding value `114` to `0`. Commit, push and open a pull request. The **test** job turns red, `test_letterbox_keeps_aspect_and_pads_grey` fails. If you set up branch protection in section 3, the **Merge** button is blocked; without it, GitHub only shows a warning and still lets you merge. Read the error in the job log. Then close the pull request without merging.
 
 This is what CI is for: wrong preprocessing silently changes a model's inputs, and the test catches it before it reaches `main`.
 

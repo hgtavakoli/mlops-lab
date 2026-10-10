@@ -30,3 +30,6 @@ def test_missing_class_counts_as_zero():
     res = check(BASE, cand, 0.02, 0.10)
     assert not res.passed
     assert res.failures[0][0] == "bike"
+
+def checking_test_job():
+    assert Fasle == True

@@ -19,7 +19,6 @@ from ultralytics import YOLO, settings
 settings.update({"mlflow": False})
 
 MODEL_NAME = "yolo-lab"
-
 p = argparse.ArgumentParser()
 p.add_argument("--data", default="coco128.yaml", help="dataset config; coco128 downloads automatically (~7 MB)")
 p.add_argument("--weights", default="yolo11n.pt", help="starting weights")
