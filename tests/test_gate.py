@@ -32,4 +32,4 @@ def test_missing_class_counts_as_zero():
     assert res.failures[0][0] == "bike"
 
 def test_checking_job():
-    assert False == True
+    assert 5 == 4
