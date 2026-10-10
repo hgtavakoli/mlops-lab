@@ -1,0 +1,9 @@
+# Install torch first, CPU build:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+ultralytics>=8.3
+mlflow>=2.14
+onnx>=1.16
+onnxruntime>=1.18
+onnxslim
+opencv-python
+numpy

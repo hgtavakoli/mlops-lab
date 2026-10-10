@@ -1,0 +1,45 @@
+# A Kubernetes Job runs a container until it finishes successfully.
+# That is the right object for training (a Deployment is for services that keep running).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: train-v1
+  labels:
+    app: mlops-lab
+spec:
+  backoffLimit: 2                # retry a failed pod at most twice
+  ttlSecondsAfterFinished: 3600  # clean the finished Job up after an hour
+  template:
+    metadata:
+      labels:
+        app: mlops-lab
+    spec:
+      restartPolicy: Never       # a Job pod must not restart in place
+      containers:
+        - name: train
+          image: lab-train:0.1
+          imagePullPolicy: IfNotPresent   # use the image we loaded into kind; don't pull from a registry
+          env:
+            - name: EPOCHS
+              value: "10000"
+            - name: LR
+              value: "0.01"
+            - name: SEED
+              value: "42"
+            - name: OUT_DIR
+              value: /output
+          resources:
+            requests:            # what the scheduler reserves
+              cpu: "500m"
+              memory: 512Mi
+            limits:              # the ceiling; over the memory limit the pod is killed (OOMKilled)
+              cpu: "1"
+              memory: 1Gi
+              # On a GPU cluster you would add:
+              # nvidia.com/gpu: 1
+          volumeMounts:
+            - name: output
+              mountPath: /output
+      volumes:
+        - name: output
+          emptyDir: {}           # scratch space; real pipelines use a PersistentVolumeClaim or object storage

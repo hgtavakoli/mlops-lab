@@ -1,0 +1,6 @@
+# For the CI checks (step 5). Install torch first, CPU build:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+pytest
+ruff
+numpy
+opencv-python-headless

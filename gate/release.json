@@ -1,0 +1,7 @@
+{
+  "results_file": "gate/results_reference.json",
+  "baseline": "onnx_fp32",
+  "candidate": "onnx_fp32",
+  "max_overall_drop": 0.02,
+  "max_class_drop": 0.10
+}

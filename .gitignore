@@ -1,0 +1,19 @@
+# Python and environments
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Data, runs and models: too big for Git, tracked by MLflow instead
+datasets/
+runs/
+work/
+mlruns/
+mlflow.db
+*.pt
+*.onnx
+
+# Editors
+.idea/
+.vscode/

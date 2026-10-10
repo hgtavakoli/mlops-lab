@@ -1,0 +1,72 @@
+# CI/CD for the MLOps lab.
+# CI  (every push and pull request): lint -> tests -> model release gate
+# CD  (only on main, after CI passed): build the training image and push it to GitHub Container Registry
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:        # lets you start it by hand from the Actions tab
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install ruff
+      - run: ruff check lablib tests 01_k8s_job
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements-dev.txt
+      - name: Unit and smoke tests
+        run: pytest -v
+
+  release-gate:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compare candidate model with baseline, class by class
+        run: python -m lablib.gate --config gate/release.json
+
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    needs: release-gate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write       # allows pushing to ghcr.io with the built-in token
+    steps:
+      - uses: actions/checkout@v4
+      - name: Image name (registry paths must be lower case)
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}/lab-train" >> "$GITHUB_ENV"
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: 01_k8s_job
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest
