@@ -31,5 +31,5 @@ def test_missing_class_counts_as_zero():
     assert not res.passed
     assert res.failures[0][0] == "bike"
 
-def checking_test_job():
-    assert 5 != 5
+def test_checking_job():
+    assert False == True
