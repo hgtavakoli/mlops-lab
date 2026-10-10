@@ -10,7 +10,7 @@ def letterbox(img: np.ndarray, size: int) -> np.ndarray:
     nh, nw = int(round(h * r)), int(round(w * r))
     img = cv2.resize(img, (nw, nh), interpolation=cv2.INTER_LINEAR)
     top, left = (size - nh) // 2, (size - nw) // 2
-    out = np.full((size, size, 3), 114, dtype=np.uint8)
+    out = np.full((size, size, 3), 0, dtype=np.uint8)
     out[top:top + nh, left:left + nw] = img
     return out
 
